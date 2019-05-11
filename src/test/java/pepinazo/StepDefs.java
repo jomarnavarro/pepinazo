@@ -1,6 +1,8 @@
 package pepinazo;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -17,28 +19,23 @@ import junit.framework.Assert;
 
 import static junit.framework.Assert.*;
 
+import java.util.concurrent.TimeUnit;
+
 public class StepDefs {
 
 	public WebDriver driver;
-	
-	LoginPage login;
-	HomePage home;
-	SearchResultsPage results;
-	
+
 	@Before
 	public void setUpTest() {
 		ChromeOptions opt = new ChromeOptions();
 		opt.addArguments("--disable-notifications");
 		driver = new ChromeDriver(opt);
-		login = new LoginPage(driver);
-		home = new HomePage(driver);
-		results = new SearchResultsPage(driver);
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 	}
-	
+
 	@After
 	public void tearDownTest() {
 		driver.quit();
-		
 	}
 
 	@Given("^I have open the browser$")
@@ -53,44 +50,75 @@ public class StepDefs {
 
 	@Then("^Login button should exist$")
 	public void Login_button_should_exist() {
-		assertTrue(login.at());
+		String loginButtonXpath = "//input[@data-testid='royal_login_button']";
+		WebElement loginButton = driver.findElement(By.xpath(loginButtonXpath));
+		assertTrue(loginButton.isDisplayed());
 	}
 
 	@Then("^Login button should be disabled$")
 	public void Login_button_should_be_disabled() {
-		assertTrue(login.loginButtonDisabled());
+		String loginButtonXpath = "//input[@data-testid='royal_login_button']";
+		WebElement loginButton = driver.findElement(By.xpath(loginButtonXpath));
+		assertFalse(loginButton.isEnabled());
 	}
 
 	@When("^I click the login button$")
 	public void I_click_the_login_button() {
-		login.clickLoginButton();
+		String loginButtonXpath = "//input[@data-testid='royal_login_button']";
+		WebElement loginButton = driver.findElement(By.xpath(loginButtonXpath));
+		loginButton.click();
 	}
 
 	@Then("^Facebook asks me to enter credentials$")
 	public void Facebook_asks_me_to_enter_credentials() {
-		// Express the Regexp above with the code you wish you had
-		System.out.println("");
+		WebElement emailField = driver.findElement(By.id("email"));
+		WebElement passField = driver.findElement(By.id("pass"));
+		assertTrue(emailField.isDisplayed() && passField.isDisplayed());
+
 	}
 
 	@When("^I login using cell phone number$")
 	public void I_login_using_cell_phone_number() {
-		// Express the Regexp above with the code you wish you had
-		System.out.println("");
+		WebElement emailField = driver.findElement(By.id("email"));
+		WebElement passField = driver.findElement(By.id("pass"));
+		String loginButtonXpath = "//input[@data-testid='royal_login_button']";
+		WebElement loginButton = driver.findElement(By.xpath(loginButtonXpath));
+
+		emailField.sendKeys("omar.selenium.abril@gmail.com");
+
+		passField.sendKeys("Test@1234");
+		
+
+		loginButton.click();
 	}
 
 	@Then("^Facebook Home Page must appear$")
 	public void Facebook_Home_Page_must_appear() {
-		assertTrue(home.at());
+		WebElement facebookLogo = driver.findElement(By.cssSelector("[data-click='bluebar_logo']"));
+		WebElement searchBox = driver.findElement(By.name("q"));
+		assertTrue(facebookLogo.isDisplayed() && searchBox.isDisplayed());
 	}
 
 	@When("^I login with ([^\"]*) and ([^\"]*)$")
 	public void I_login_with_user_and_pass(String username, String password) {
-		login.login(username, password);
+		WebElement emailField = driver.findElement(By.id("email"));
+		WebElement passField = driver.findElement(By.id("pass"));
+		String loginButtonXpath = "//input[@data-testid='royal_login_button']";
+		WebElement loginButton = driver.findElement(By.xpath(loginButtonXpath));
+
+		emailField.sendKeys(username);
+
+		passField.sendKeys(password);
+
+		loginButton.click();
+
 	}
 
 	@Then("^I can see Home Page$")
 	public void I_can_see_Home_Page() {
-		assertTrue(home.at());
+		WebElement facebookLogo = driver.findElement(By.cssSelector("[data-click='bluebar_logo']"));
+		WebElement searchBox = driver.findElement(By.name("q"));
+		assertTrue(facebookLogo.isDisplayed() && searchBox.isDisplayed());
 	}
 
 }
