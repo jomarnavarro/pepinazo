@@ -36,6 +36,6 @@ Scenario: User can log into facebook with cell phone number
 	
 	And I login using cell phone number
 	
-	Then Facebook Home Page must appear
+	Then I can see Home Page
 	
 	
